@@ -5,21 +5,21 @@ from src.quantum_transformers.quantum_layer import QuantumLayer
 from typing import Optional, Callable
 
 class CyclicShift(nn.Module):
-    displacement: int
+    displacement: int  # pyrefly: ignore [bad-class-definition]
 
     @nn.compact
     def __call__(self, x):
         return jnp.roll(x, shift=(self.displacement, self.displacement), axis=(1, 2))
 
 class Residual(nn.Module):
-    fn: nn.Module
+    fn: nn.Module  # pyrefly: ignore [bad-class-definition]
 
     @nn.compact
     def __call__(self, x, **kwargs):
         return self.fn(x, **kwargs) + x
 
 class PreNorm(nn.Module):
-    fn: nn.Module
+    fn: nn.Module  # pyrefly: ignore [bad-class-definition]
 
     @nn.compact
     def __call__(self, x, **kwargs):
@@ -49,12 +49,12 @@ def get_relative_distances(window_size):
     return distances
 
 class WindowAttention(nn.Module):
-    dim: int
-    heads: int
-    head_dim: int
-    shifted: bool
-    window_size: int
-    relative_pos_embedding: bool
+    dim: int  # pyrefly: ignore [bad-class-definition]
+    heads: int  # pyrefly: ignore [bad-class-definition]
+    head_dim: int  # pyrefly: ignore [bad-class-definition]
+    shifted: bool  # pyrefly: ignore [bad-class-definition]
+    window_size: int  # pyrefly: ignore [bad-class-definition]
+    relative_pos_embedding: bool  # pyrefly: ignore [bad-class-definition]
     quantum_w_shape: tuple = (1,)
     quantum_circuit: Optional[Callable] = None
 
@@ -98,20 +98,20 @@ class WindowAttention(nn.Module):
         return out
 
 class SwinBlock(nn.Module):
-    dim: int
-    heads: int
-    head_dim: int
-    mlp_dim: int
-    shifted: bool
-    window_size: int
-    relative_pos_embedding: bool
+    dim: int  # pyrefly: ignore [bad-class-definition]
+    heads: int  # pyrefly: ignore [bad-class-definition]
+    head_dim: int  # pyrefly: ignore [bad-class-definition]
+    mlp_dim: int  # pyrefly: ignore [bad-class-definition]
+    shifted: bool  # pyrefly: ignore [bad-class-definition]
+    window_size: int  # pyrefly: ignore [bad-class-definition]
+    relative_pos_embedding: bool  # pyrefly: ignore [bad-class-definition]
     quantum_w_shape: tuple = (1,)
     quantum_attn_circuit: Optional[Callable] = None
     quantum_mlp_circuit: Optional[Callable] = None
 
     @nn.compact
     def __call__(self, x, deterministic=True):
-        x = Residual(PreNorm(fn=WindowAttention(
+        x = Residual(fn=PreNorm(fn=WindowAttention(
             dim=self.dim,
             heads=self.heads,
             head_dim=self.head_dim,
@@ -122,7 +122,7 @@ class SwinBlock(nn.Module):
             quantum_circuit=self.quantum_attn_circuit
         )))(x, deterministic=deterministic)
 
-        x = Residual(PreNorm(fn=FeedForward(
+        x = Residual(fn=PreNorm(fn=FeedForward(
             dim=self.dim,
             hidden_dim=self.mlp_dim,
             quantum_w_shape=self.quantum_w_shape,
@@ -131,9 +131,9 @@ class SwinBlock(nn.Module):
         return x
 
 class PatchMerging(nn.Module):
-    in_channels: int
-    out_channels: int
-    downscaling_factor: int
+    in_channels: int  # pyrefly: ignore [bad-class-definition]
+    out_channels: int  # pyrefly: ignore [bad-class-definition]
+    downscaling_factor: int  # pyrefly: ignore [bad-class-definition]
 
     @nn.compact
     def __call__(self, x):
@@ -162,14 +162,14 @@ class PatchMerging(nn.Module):
         return x
 
 class StageModule(nn.Module):
-    in_channels: int
-    hidden_dimension: int
-    layers: int
-    downscaling_factor: int
-    num_heads: int
-    head_dim: int
-    window_size: int
-    relative_pos_embedding: bool
+    in_channels: int  # pyrefly: ignore [bad-class-definition]
+    hidden_dimension: int  # pyrefly: ignore [bad-class-definition]
+    layers: int  # pyrefly: ignore [bad-class-definition]
+    downscaling_factor: int  # pyrefly: ignore [bad-class-definition]
+    num_heads: int  # pyrefly: ignore [bad-class-definition]
+    head_dim: int  # pyrefly: ignore [bad-class-definition]
+    window_size: int  # pyrefly: ignore [bad-class-definition]
+    relative_pos_embedding: bool  # pyrefly: ignore [bad-class-definition]
     quantum_w_shape: tuple = (1,)
     quantum_attn_circuit: Optional[Callable] = None
     quantum_mlp_circuit: Optional[Callable] = None
@@ -219,15 +219,15 @@ class StageModule(nn.Module):
         return jnp.transpose(x, [0, 3, 1, 2])
 
 class SwinTransformer(nn.Module):
-    hidden_dim: int
-    layers: tuple
-    heads: tuple
-    channels: int
-    num_classes: int
-    head_dim: int
-    window_size: int
-    downscaling_factors: tuple
-    relative_pos_embedding: bool
+    hidden_dim: int  # pyrefly: ignore [bad-class-definition]
+    layers: tuple  # pyrefly: ignore [bad-class-definition]
+    heads: tuple  # pyrefly: ignore [bad-class-definition]
+    channels: int  # pyrefly: ignore [bad-class-definition]
+    num_classes: int  # pyrefly: ignore [bad-class-definition]
+    head_dim: int  # pyrefly: ignore [bad-class-definition]
+    window_size: int  # pyrefly: ignore [bad-class-definition]
+    downscaling_factors: tuple  # pyrefly: ignore [bad-class-definition]
+    relative_pos_embedding: bool  # pyrefly: ignore [bad-class-definition]
     quantum_w_shape: tuple = (1,)
     quantum_attn_circuit: Optional[Callable] = None
     quantum_mlp_circuit: Optional[Callable] = None

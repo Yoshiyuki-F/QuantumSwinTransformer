@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Any, Callable
 import tensorcircuit as tc
 import jax.numpy as jnp
 import flax.linen
@@ -7,14 +7,14 @@ import logging
 
 K = tc.set_backend("jax")
 
-def angle_embedding(c: tc.Circuit, inputs):
+def angle_embedding(c: Any, inputs):
     num_qubits = inputs.shape[-1]
 
     for j in range(num_qubits):
         c.rx(j, theta=inputs[j])
 
 
-def basic_vqc(c: tc.Circuit, inputs, weights):
+def basic_vqc(c: Any, inputs, weights):
     num_qubits = inputs.shape[-1]
     num_qlayers = weights.shape[-2]
 
@@ -60,8 +60,8 @@ def get_circuit(embedding: Callable = angle_embedding, vqc: Callable = basic_vqc
 
 
 class QuantumLayer(flax.linen.Module):
-    circuit: Callable
-    num_qubits: int
+    circuit: Callable  # pyrefly: ignore [bad-class-definition]
+    num_qubits: int  # pyrefly: ignore [bad-class-definition]
     w_shape: tuple = (1,)
 
     @flax.linen.compact

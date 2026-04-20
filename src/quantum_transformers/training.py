@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 import time
 import sys
 
@@ -19,11 +19,11 @@ import datetime
 
 class TrainState(flax.training.train_state.TrainState):
     # See https://flax.readthedocs.io/en/latest/guides/dropout.html.
-    key: jax.random.PRNGKey  # type: ignore
+    key: jax.Array
 
 
 @jax.jit
-def train_step(state: TrainState, inputs: jax.Array, labels: jax.Array, key: jax.random.PRNGKey) -> TrainState:
+def train_step(state: TrainState, inputs: jax.Array, labels: jax.Array, key: jax.Array) -> TrainState:
     """
     Performs a single training step on the given batch of inputs and labels.
 
@@ -61,7 +61,7 @@ def train_step(state: TrainState, inputs: jax.Array, labels: jax.Array, key: jax
 
 
 @jax.jit
-def eval_step(state: TrainState, inputs: jax.Array, labels: jax.Array) -> tuple[float, jax.Array]:
+def eval_step(state: TrainState, inputs: jax.Array, labels: jax.Array) -> tuple[jax.Array, jax.Array]:
     """
     Performs a single evaluation step on the given batch of inputs and labels.
 
@@ -167,8 +167,9 @@ def evaluate(state: TrainState, eval_dataloader, num_classes: int,
 def train_and_evaluate(model, train_dataloader, val_dataloader, test_dataloader, num_classes,
                        num_epochs, lrs_peak_value=1e-3, lrs_warmup_steps=5000, lrs_decay_steps=50000,
                        seed=42, use_ray=False, debug=False):
+    ray_session: Any = None
     if use_ray:
-        from ray.air import session
+        from ray.air import session as ray_session
         from ray.experimental.tqdm_ray import tqdm as tqdm_ray
         tqdm_cls = tqdm_ray
     else:
@@ -229,7 +230,7 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, test_dataloader,
     total_train_time = 0.0
     start_time = time.time()
 
-    metrics = {
+    metrics: dict[str, Any] = {
         'train_losses': [],
         'val_losses': [],
         'train_aucs': [],
@@ -279,8 +280,8 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, test_dataloader,
             best_val_auc = val_auc
             best_epoch = epoch + 1
             best_state = state
-        if use_ray:
-            session.report({
+        if ray_session is not None:
+            ray_session.report({
                 'val_loss': val_loss,
                 'val_auc': val_auc,
                 'val_accuracy': val_acc,
@@ -316,8 +317,7 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, test_dataloader,
     writer.add_scalar('test_accuracy', float(test_acc), num_epochs)
     writer.close()
 
-    if use_ray:
-        session.report({'test_loss': test_loss, 'test_auc': test_auc, 'test_accuracy': test_acc})
+    if ray_session is not None:
+        ray_session.report({'test_loss': test_loss, 'test_auc': test_auc, 'test_accuracy': test_acc})
 
     return metrics
-

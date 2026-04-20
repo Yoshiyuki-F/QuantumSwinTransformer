@@ -3,8 +3,8 @@ import flax.linen as nn
 from src.quantum_transformers.quantum_layer import QuantumLayer
 
 class FeedForward(nn.Module):
-    dim: int
-    hidden_dim: int
+    dim: int  # pyrefly: ignore [bad-class-definition]
+    hidden_dim: int  # pyrefly: ignore [bad-class-definition]
     dropout: float = 0.0
     quantum_w_shape: tuple = (1,)
     quantum_circuit: Optional[Callable] = None

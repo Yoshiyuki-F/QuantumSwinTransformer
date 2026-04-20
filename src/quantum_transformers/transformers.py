@@ -10,8 +10,8 @@ from src.quantum_transformers.quantum_layer import QuantumLayer
 # - https://github.com/google-research/vision_transformer/blob/main/vit_jax/models_vit.py
 
 class MultiHeadSelfAttention(nn.Module):
-    hidden_size: int
-    num_heads: int
+    hidden_size: int  # pyrefly: ignore [bad-class-definition]
+    num_heads: int  # pyrefly: ignore [bad-class-definition]
     dropout: float = 0.0
 
     quantum_w_shape: tuple = (1,)
@@ -64,14 +64,13 @@ class MultiHeadSelfAttention(nn.Module):
 from src.quantum_transformers.common_layers import FeedForward
 
 class TransformerBlock(nn.Module):
-    hidden_size: int
-    num_heads: int
-    mlp_hidden_size: int
+    hidden_size: int  # pyrefly: ignore [bad-class-definition]
+    num_heads: int  # pyrefly: ignore [bad-class-definition]
+    mlp_hidden_size: int  # pyrefly: ignore [bad-class-definition]
     dropout: float = 0.0
 
     quantum_w_shape: tuple = (1,)
     quantum_attn_circuit: Optional[Callable] = None
-    quantum_mlp_circuit: Optional[Callable] = None
     quantum_mlp_circuit: Optional[Callable] = None
 
     @nn.compact
@@ -90,13 +89,13 @@ class TransformerBlock(nn.Module):
         return x + y
 
 class Transformer(nn.Module):
-    num_tokens: int
-    max_seq_len: int
-    num_classes: int
-    hidden_size: int
-    num_heads: int
-    num_transformer_blocks: int
-    mlp_hidden_size: int
+    num_tokens: int  # pyrefly: ignore [bad-class-definition]
+    max_seq_len: int  # pyrefly: ignore [bad-class-definition]
+    num_classes: int  # pyrefly: ignore [bad-class-definition]
+    hidden_size: int  # pyrefly: ignore [bad-class-definition]
+    num_heads: int  # pyrefly: ignore [bad-class-definition]
+    num_transformer_blocks: int  # pyrefly: ignore [bad-class-definition]
+    mlp_hidden_size: int  # pyrefly: ignore [bad-class-definition]
     dropout: float = 0.0
 
     quantum_w_shape: tuple = (1,)
@@ -134,7 +133,7 @@ class Transformer(nn.Module):
         # x.shape = (batch_size, hidden_size)
 
         # Classification logits
-        x = nn.Dense(self.num_classes)(x)
+        x = nn.Dense(features=self.num_classes)(x)
         # x.shape = (batch_size, num_classes)
 
         return x
@@ -153,12 +152,12 @@ def posemb_sincos_2d(sqrt_num_steps, hidden_size, temperature=10_000., dtype=jnp
     return jnp.asarray(pe, dtype)[None, :, :]
 
 class VisionTransformer(nn.Module):
-    num_classes: int
-    patch_size: int
-    hidden_size: int
-    num_heads: int
-    num_transformer_blocks: int
-    mlp_hidden_size: int
+    num_classes: int  # pyrefly: ignore [bad-class-definition]
+    patch_size: int  # pyrefly: ignore [bad-class-definition]
+    hidden_size: int  # pyrefly: ignore [bad-class-definition]
+    num_heads: int  # pyrefly: ignore [bad-class-definition]
+    num_transformer_blocks: int  # pyrefly: ignore [bad-class-definition]
+    mlp_hidden_size: int  # pyrefly: ignore [bad-class-definition]
     dropout: float = 0.1
     pos_embedding: Literal['none', 'learn', 'sincos'] = 'learn'
     classifier: Literal['token', 'gap'] = 'gap'

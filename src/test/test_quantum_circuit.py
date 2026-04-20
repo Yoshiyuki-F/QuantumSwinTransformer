@@ -1,6 +1,13 @@
+from pathlib import Path
+import sys
+
 import jax.numpy as jnp
-from src.quantum_transformers.quantum_layer_pennylane import get_circuit
-# from src.quantum_transformers.quantum_layer import get_circuit
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.quantum_transformers.quantum_layer import get_circuit
 
 # テスト用データ
 x = jnp.ones((128, 8))  # 入力データ (128サンプル, 8特徴量)

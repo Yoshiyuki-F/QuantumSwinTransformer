@@ -209,11 +209,11 @@ if __name__ == '__main__':
              # JAX raises RuntimeError if 'gpu' backend is not found
              raise RuntimeError(f"No GPU found! ({e}). Use --force-cpu to run on CPU.")
 
-    resources_per_trial = {"cpu": 4, "gpu": num_gpus_per_trial}
+    resources_per_trial: dict[str, float] = {"cpu": 4.0, "gpu": float(num_gpus_per_trial)}
     tuner = tune.Tuner(
         tune.with_resources(train, resources=resources_per_trial),
         tune_config=tune.TuneConfig(
-            scheduler=tune.schedulers.ASHAScheduler(metric="val_auc", mode="max", max_t=param_space['num_epochs']),
+            scheduler=tune.schedulers.ASHAScheduler(metric="val_auc", mode="max", max_t=common_params['num_epochs']),
             num_samples=args.trials,
         ),
         run_config=tune.RunConfig(),

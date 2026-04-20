@@ -45,6 +45,7 @@ torch = { index = "pytorch-cpu" }
 torchvision = { index = "pytorch-cpu" }
 
 [tool.pyrefly]
+search-path = ["."]
 project-includes = [
     "**/*.py*",
     "**/*.ipynb",

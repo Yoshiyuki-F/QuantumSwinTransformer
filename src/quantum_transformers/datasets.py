@@ -1,10 +1,9 @@
+from typing import Any, cast
 import os
 import tarfile
-from glob import glob
 from pathlib import Path
 
 import numpy as np
-import jax.numpy as jnp
 import gdown
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -54,9 +53,9 @@ class NumPyFolderDataset(Dataset):
     def __len__(self):
         return len(self.files)
 
-    def __getitem__(self, idx):
-        file_path = self.files[idx]
-        label = self.labels[idx]
+    def __getitem__(self, index):
+        file_path = self.files[index]
+        label = self.labels[index]
         try:
             image = np.load(file_path).astype(np.float32)
             if self.img_shape is not None:
@@ -248,7 +247,7 @@ def get_imdb_dataloaders(data_dir: str = '~/data', batch_size: int = 1, drop_rem
     dataset = hf_load_dataset("imdb", cache_dir=data_dir)
     
     # Tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+    tokenizer = cast(Any, AutoTokenizer.from_pretrained("bert-base-uncased"))
     
     def tokenize_function(examples):
         return tokenizer(examples["text"], padding="max_length", truncation=True, max_length=max_seq_len)
@@ -289,8 +288,8 @@ def get_imdb_dataloaders(data_dir: str = '~/data', batch_size: int = 1, drop_rem
             self.hf_ds = hf_ds
         def __len__(self):
             return len(self.hf_ds)
-        def __getitem__(self, idx):
-            item = self.hf_ds[idx]
+        def __getitem__(self, index):
+            item = self.hf_ds[index]
             return item["input_ids"], item["label"]
             
     train_dataset = HFWrapper(train_data)
@@ -300,8 +299,7 @@ def get_imdb_dataloaders(data_dir: str = '~/data', batch_size: int = 1, drop_rem
     print("Cardinalities (train, val, test):", len(train_dataset), len(val_dataset), len(test_dataset))
     
     # Return dataloaders, vocab (dummy size), and tokenizer
-    vocab = tokenizer.vocab # This is a dict
+    vocab = cast(dict[str, int], tokenizer.vocab) # This is a dict
     
     return datasets_to_dataloaders(train_dataset, val_dataset, test_dataset, batch_size,
                                    drop_remainder=drop_remainder), vocab, tokenizer
-
